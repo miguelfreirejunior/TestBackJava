@@ -1,12 +1,14 @@
 package br.com.gastos.gastosapi;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
+import org.springframework.hateoas.Identifiable;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 
@@ -16,7 +18,8 @@ import lombok.Data;
  */
 @Data
 @Table
-public class Gasto {
+@EqualsAndHashCode
+public class Gasto implements Identifiable<UUID> {
 
 	// Usando provisóriamente apenas para criar a estrutura inicial
 	/**
@@ -34,5 +37,5 @@ public class Gasto {
 	
 	private double valor;
 	
-	private LocalDateTime data;
+	private Instant data;
 }

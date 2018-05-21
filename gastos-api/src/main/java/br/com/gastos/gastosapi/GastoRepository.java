@@ -1,6 +1,8 @@
 package br.com.gastos.gastosapi;
 
+import java.util.UUID;
+
 import org.springframework.data.repository.CrudRepository;
 
-public interface GastoRepository extends CrudRepository<Gasto, Long> {
+public interface GastoRepository extends CrudRepository<Gasto, UUID> {
 }

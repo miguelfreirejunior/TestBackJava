@@ -1,11 +1,14 @@
 package br.com.gastos.gastosapi;
 
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.cassandraunit.spring.CassandraDataSet;
 import org.cassandraunit.spring.CassandraUnitDependencyInjectionTestExecutionListener;
-import org.cassandraunit.spring.CassandraUnitTestExecutionListener;
 import org.cassandraunit.spring.EmbeddedCassandra;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +25,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = GastoApiApplication.class)
@@ -45,21 +51,25 @@ public class GastoControllerITTests {
 	@Before
 	public void setup() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+		
+		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 	}
 
 	@Test
 	public void post_Repository_Called() throws Exception {
 		String payload = "{ \"descricao\": \"comra da semana\", \"valor\": 200.00, \"codigousuario\": 23, \"data\": \"2010-11-12T13:14:15Z\" }";
-
 		MvcResult actual = this.mockMvc
-				.perform(post("/api/v1/gastos").contentType(MediaType.APPLICATION_JSON).content(payload)).andReturn();
-		// .andExpect(status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-		// .andExpect(jsonPath("$.id",
-		// Matchers.greaterThan(1))).andReturn().getResponse().getContentAsString();
-
-		String s = "";
-		// Assert.assertArrayEquals(graph.getData().toArray(),
-		// expected.getData().toArray());
+				.perform(post("/api/v1/gastos").contentType(MediaType.APPLICATION_JSON).content(payload))
+				.andExpect(status().isCreated()).andReturn();
+		
+		actual = this.mockMvc
+			.perform(get(actual.getResponse().getHeader("location")))
+			.andReturn();
+			
+		String s = actual.getResponse().getContentAsString();
+		Assert.assertEquals(parse(payload, Gasto.class), parse(s, Gasto.class));
 	}
 
 	public String json(Object o) throws JsonProcessingException {
