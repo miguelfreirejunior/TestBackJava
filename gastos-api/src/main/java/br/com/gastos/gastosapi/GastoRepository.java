@@ -1,6 +1,6 @@
 package br.com.gastos.gastosapi;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
-public interface GastoRepository extends JpaRepository<Gasto, Long> {
+public interface GastoRepository extends CrudRepository<Gasto, Long> {
 }

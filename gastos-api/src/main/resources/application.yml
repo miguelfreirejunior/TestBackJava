@@ -1,6 +1,13 @@
 spring:
   application:
     name: gastos-api
+  data:
+    cassandra:
+      schema-action: create-if-not-exists
+      keyspace-name: testKeySpace
+      contact-points:
+      - 127.0.0.1
+      port: 9142
 server:
   port: 0
 eureka:

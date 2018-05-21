@@ -1,11 +1,10 @@
 package br.com.gastos.gastosapi;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.springframework.data.cassandra.core.mapping.PrimaryKey;
+import org.springframework.data.cassandra.core.mapping.Table;
 
 import lombok.Data;
 
@@ -16,16 +15,15 @@ import lombok.Data;
  * Representa um gasto realizado
  */
 @Data
-@Entity
+@Table
 public class Gasto {
 
 	// Usando provisóriamente apenas para criar a estrutura inicial
 	/**
 	 * Identificador único do gasto
 	 */
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	@PrimaryKey
+	private UUID id;
 	
 	/**
 	 * Código do usuário que realizou o gasto
